@@ -1,3 +1,6 @@
+# функция кодирования по Хэммингу
+# На вход принимает битовую последовательность в виде строки
+# на выходе закодированное сообщение
 def HammingEncode(information):
     # information - должно быть в бинарном виде
 
@@ -12,6 +15,7 @@ def HammingEncode(information):
     print('Количество битов избыточности:', k)
 
     # создаём список необходимых степеней двойки
+    global two_in_power
     two_in_power = [ 2**i for i in range(k) ]
 
     bits_in_msg = m + k
@@ -39,7 +43,6 @@ def HammingEncode(information):
 
     # Производим расчёт "N через"
     for N in two_in_power:
-        #print("Current power", N)
 
         # Для N=1 свои правила
         if N == 1:
@@ -75,9 +78,47 @@ def HammingEncode(information):
 
     return encoded_msg
 
+# Функция декодирования полученного сообщения 
+# На вход принимает сообщение с помехой
+# На выходе корректируется ошибка и возвращается исходное сообщение
+def HammingDecode(stored, recieved):
+    # Инвертируем бит под номером N
+    N = 9 
+    recieved[N] = stored[N] ^ 1
+
+    print(stored, " - без ошибки")
+    print(recieved, " - с ошибкой")
+
+    error_index = 0
+    for bit_number in  range(len(stored)):
+        if stored[bit_number] != recieved[bit_number]:
+            error_index += bit_number
+
+    if not error_index:
+        print("Ошибок при передаче нет!", end="\n\n")
+        return recieved
+    else:
+        print(f"Ошибка в бите {error_index}!\n")
+
+    stored[error_index] = recieved[error_index] ^ 1
+    msg = []
+    for i in range(len(stored)):
+        if i+1 not in two_in_power:
+            msg.append(stored[i])
+    return msg
+
 if __name__ == "__main__":
-    info = '0100010000111101'
+    info = '00111101'
     print("Исходное сообщение:", info)
 
     result = HammingEncode(info)
-    print("Закодированное сообщение:", result)
+    print("Закодированное сообщение:", result, end="\n\n")
+
+    recieved = '00111101'
+    print("Сообщение с ошибкой:", recieved)
+
+    error_recieved = HammingEncode(recieved)
+    print("Закодированное сообщение с ошибкой", error_recieved, end="\n\n")
+
+    initial_message = HammingDecode(result, error_recieved)
+    print("Исходное сообщение:", initial_message)
