@@ -39,11 +39,11 @@ def HammingEncode(information):
 
     # Производим расчёт "N через"
     for N in two_in_power:
-#        print("Current power", N)
+        #print("Current power", N)
 
         # Для N=1 свои правила
         if N == 1:
-            bits = [x for x in range(0, bits_in_msg) if x % 2 == 0] 
+            bits = [x for x in range(0, bits_in_msg) if x % 2 == 0]
 
         else:
            # Генерируем список множителей ( число укладываний интервала в отрезок )
@@ -53,12 +53,17 @@ def HammingEncode(information):
             # Генерируем список битов для суммирования
             bits = [ ( k*N ) - 1 + i for i in range(N) for k in multipliers ]
 
+            # Очень важно сохранять порядок
+            # Это спасёт нас от пропуска младших бит
+            bits.sort()
+
         summ = 0
         for bit in bits:
             # На последней степени двойки  мы можем выйти за границы длины сообщения
             # Поэтому отлавливаем исключение
             try:
-                summ += int(msg[bit])
+                # Суммируем биты по определённым ранее позициям
+                summ += msg[bit]
             except IndexError:
                 break
 
@@ -71,7 +76,7 @@ def HammingEncode(information):
     return encoded_msg
 
 if __name__ == "__main__":
-    info = '11011'
+    info = '0100010000111101'
     print("Исходное сообщение:", info)
 
     result = HammingEncode(info)
