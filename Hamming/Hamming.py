@@ -1,5 +1,3 @@
-from  math  import log
-
 def HammingEncode(information):
     # information - должно быть в бинарном виде
 
@@ -35,32 +33,31 @@ def HammingEncode(information):
 
     print('Избыточное сообщение:',msg)
 
-#   N = 2  [ 1*N - 1 + i for i in range(2**(N-1)) ]
-#   N = 4  [ 3*N - 1 + i for i in range(2**(N-2)) ]
-#   N = 8  [ 3*N - 1 + i for i in range(2**(N-5)) ] 
-#   N = 16 [ 1*N - 1 + i for i in range(2**(N-12))]
-
+    print("Powers", two_in_power)
     # performing N throught N counting
     for N in two_in_power:
         print(N)
 
+       # Generate a list of possible multipliers 
+       # We can only use even numbers
+
+        # N = 1 acts by it's own
         if N == 1:
-            print([N - 1, 2*N, 4*N, 6*N, 8*N, 10*N])
+            bits = [x for x in range(1, bits_in_msg) if x % 2 == 0] 
+            print("Bits", bits)
+            continue
 
-        elif N == 2:
-            print([ 1*N - 1 + i for i in range(2**(N - log(N, 2))) ])
+        print(bits_in_msg // N )
+        multipliers = [ x for x in range(0, bits_in_msg // N  + 1) if x % 2 != 0]
+        print("Multipliers", multipliers)
 
-        elif N == 4:
-            print([ 1*N - 1 + i for i in range(2**(N-2)) ])
-
-        elif N == 8:
-            print([ 1*N - 1 + i for i in range(2**(N-5)) ] )
-
-        elif N == 16:
-            print([ 1*N - 1 + i for i in range(2**(N-12)) ] )
+        # generate a list of "NtN" numbers for each N
+        bits = [ ( k*N ) - 1 + i for i in range(N) for k in multipliers ]
+        bits.sort()
+        print("Bits", bits)
 
 if __name__ == "__main__":
-    info = '1101'
+    info = '1110000000'
     print("Исходное сообщение:", info)
 
     HammingEncode(info)
