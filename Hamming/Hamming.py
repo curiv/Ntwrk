@@ -95,7 +95,12 @@ def HammingDecode(stored, recieved):
         print("Ошибок при передаче нет!", end="\n\n")
     else:
         print(f"Ошибка в бите {error_index}!\n")
-        stored[error_index] = recieved[error_index] ^ 1
+        try:
+            # Инвертируем ошибочный бит
+            stored[error_index] = recieved[error_index] ^ 1
+        except IndexError:
+            print("Возможна двойная ошибка!")
+            exit(1)
 
     msg = []
     for i in range(len(stored)):
@@ -104,7 +109,7 @@ def HammingDecode(stored, recieved):
     return msg
 
 if __name__ == "__main__":
-    sent  = '10111101'
+    sent  = '01111100'
     sent_encoded  = HammingEncode(sent)
     print("Исходное сообщение:", sent)
     print("Закодированное сообщение:", sent_encoded, end="\n\n")
