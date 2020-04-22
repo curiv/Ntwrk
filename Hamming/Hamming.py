@@ -33,26 +33,22 @@ def HammingEncode(information):
 
     print('Избыточное сообщение:',msg)
 
-    print("Powers", two_in_power)
-    # performing N throught N counting
+    # Производим расчёт "N через"
     for N in two_in_power:
         print(N)
 
-       # Generate a list of possible multipliers 
-       # We can only use even numbers
-
-        # N = 1 acts by it's own
+        # Для N=1 свои правила
         if N == 1:
-            bits = [x for x in range(1, bits_in_msg) if x % 2 == 0] 
-            print("Bits", bits)
-            continue
+            bits = [x for x in range(0, bits_in_msg) if x % 2 == 0] 
 
-        print(bits_in_msg // N )
-        multipliers = [ x for x in range(0, bits_in_msg // N  + 1) if x % 2 != 0]
-        print("Multipliers", multipliers)
+        else:
+           # Генерируем список множителей ( число укладываний интервала в отрезок )
+           # Используем только чётные числа
+            multipliers = [ x for x in range(0, bits_in_msg // N  + 1) if x % 2 != 0]
 
-        # generate a list of "NtN" numbers for each N
-        bits = [ ( k*N ) - 1 + i for i in range(N) for k in multipliers ]
+            # Генерируем список битов для суммирования
+            bits = [ ( k*N ) - 1 + i for i in range(N) for k in multipliers ]
+
         bits.sort()
         print("Bits", bits)
 
