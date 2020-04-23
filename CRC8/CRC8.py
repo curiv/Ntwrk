@@ -1,29 +1,43 @@
 from sympy import Symbol, div
+def text_to_bits(text, encoding='utf-8', errors='surrogatepass'):
+        bits = bin(int.from_bytes(text.encode(encoding, errors), 'big'))[2:]
+        return bits.zfill(8 * ((len(bits) + 7) // 8))
 
 CRC8_poly = "111010101" 
+CRC8_poly = list(CRC8_poly)
+#message = input("Insert a message to find a CRC summ:\n>")
+message = "12"
+binary_message = list(text_to_bits(message))
 
-message = input("Insert a message to find a CRC summ:\n>")
+# Skip first zeroes
+for index,bit in enumerate(binary_message):
+    if bit == '1':
+        binary_message = binary_message[index:]
+        break
 
-# convert all characters to the binary form
-binary_message = ''
-for char in message:
-    decimal = ord(char)
+print(f"Binary message {binary_message}" )
+print(f"CRC8_poly {CRC8_poly}")
 
-    # get rid of '0b' at the beginning
-    binary = str(bin(decimal)[2:])
+for i in range(8):
+    xored = int(binary_message[i]) ^ int(CRC8_poly[i])
+    print(binary_message[i], CRC8_poly[i], xored)
+    binary_message[i] = str(xored)
 
-    # fill unimportant bit at the beginning
-    if len(binary) == 7:
-        binary = '0' + binary
+print(binary_message)
 
-    print(f"{char} - {decimal} - {binary}")
 
-    binary_message += binary
+for index,bit in enumerate(binary_message):
+    if bit == '1':
+        binary_message = binary_message[index:]
+        print(index)
+        break
+print(f"Binary message {binary_message}" )
+print(f"CRC8_poly {CRC8_poly}")
 
-print("Binary message:", binary_message)
-print("CRC8 poly:", CRC8_poly)
+for i in range(8):
+    xored = int(binary_message[i]) ^ int(CRC8_poly[i])
+    print(binary_message[i], CRC8_poly[i], xored)
+    binary_message[i] = str(xored)
 
-for i in range(len(binary_message) - len(CRC8_poly) + 1):
-    octet = binary_message[i:i+len(CRC8_poly)]
-    print(octet)
+print(binary_message)
 
