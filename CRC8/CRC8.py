@@ -19,27 +19,29 @@ def have_zero_reminder(bits):
 # На выходе остаток
 def CRC(CRC_poly, message, padding):
 
+    # Добавляем нули в начало, если число символов не равно 7
+    if len(padding) != len(CRC_poly)-1:
+        padding = ''.join("0" for _ in range(1, len(CRC_poly) - len(padding))) + padding
+        print("Padding", padding)
+
     # Переводим данные в удобный вид
     CRC_poly = list(CRC_poly)
-
-    # Инициализируем добавку в виде нулей в конец сообщения
-
+    print("Message", text_to_bits(message))
     binary_message = text_to_bits(message) + padding
-    #binary_message = "1101011011" + padding
     binary_message = list(binary_message)
 
     # Сдвигаемся, пока есть куда
-    while len(binary_message) > len(CRC_poly):
+    while True:
 
         # Проверка на равенство всех элементов списка нулю
         # Это возможно только при нулевом остатке
         if have_zero_reminder(binary_message):
             print(f"Zero reminder!\nCRC {padding} seems correct!\nExpected message: {message}")
-            return ''
+            return "OK" 
 
         print("Next iteration")
 
-        # Пропускаем незначачащие нули
+        # Пропускаем незначащие нули
         for index,bit in enumerate(binary_message):
             if bit == '1':
                 binary_message = binary_message[index:]
@@ -53,7 +55,6 @@ def CRC(CRC_poly, message, padding):
             print("Binary is to small already!")
             return binary_message
 
-
         # Ксорим с перезаписью
         for i in range(len(CRC_poly)):
             xored = int(binary_message[i]) ^ int(CRC_poly[i])
@@ -63,18 +64,21 @@ def CRC(CRC_poly, message, padding):
 
         print(f"Binary {binary_message}\n")
 
-    return binary_message
-
 if __name__ == "__main__":
-    CRC_poly = "10011"
+    CRC_poly = "11010101"
     message  = input("Insert a message to find a CRC summ:\n>")
+
+    # Инициализируем добавку в виде нулей в конец сообщения
+    # Позже сюда будем добавлять CRC
     padding  = "0"*(len(CRC_poly)-1)
 
     crc      = CRC(CRC_poly, message, padding)
     crc      = ''.join(str(char) for char in crc)
     print(f"\nCRC for that message: {crc}\n")
+    print(len(crc))
 
-    input("Found a CRC. Would you like to check it?")
-    check  = CRC(CRC_poly, message, crc)
-    print(check)
+    input("Found a CRC. Press any key to check it?")
+    if  CRC(CRC_poly, message, crc ) != "OK":
+        print("\nCRC is not correct!")
+        exit(1)
 
