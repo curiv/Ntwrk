@@ -1,62 +1,41 @@
+def Dijkstra(N, start, matrix, inf):
+    valid = [True]*N
+    weight = [inf]*N
 
-def Deikstra(matrix):
-    inf = 7777
+    # Зануляем расстояние до самого себя
+    weight[start] = 0
+    # Проходимся по всем узлам
+    for _ in range(N):
+        min_weight = inf + 1
+        # -1 - послений элемент
+        ID_min_weight = -1
 
-    # Относительно какого узла считаем
-    start_node = 0
+        for j in range(N):
+            if valid[j] and weight[j] < min_weight:
+                min_weight = weight[j]
+                ID_min_weight = j
 
-    # Инициализируем метки бесконечностью
-    marks = [9999 for _ in range(len(matrix))]
+        for z in range(N):
+            if weight[ID_min_weight] + matrix[ID_min_weight][z] < weight[z]:
+                # Увеличиваем длину пути
+                weight[z] = weight[ID_min_weight] + matrix[ID_min_weight][z]
 
-    # Инициализируем начальный узер нулевой меткой
-    W = 0
-    marks[start_node] = W
+        valid[ID_min_weight] = False
 
-    print(marks)
-
-    # Инициализируем список возможных путей    
-    possible_nodes = []
-
-    # Рассматриваем пути из ноды с индексом start_node
-    initial_node  = matrix[start_node]
-
-    # Находим минимальную длину пути
-    shortest_path = min(initial_node)
-    
-    #TODO Loop here maybe
-    # Находим индексы узлов с одинаковой стоимостью пути
-    dummy_node = initial_node
-    for  i in range(len(initial_node)):
-        try:
-            shortest_node_index = dummy_node.index(shortest_path)
-            dummy_node[shortest_node_index] = 0
-            possible_nodes.append(shortest_node_index)
-        except ValueError:
-            break
-
-    if len(possible_nodes) > 1:
-        print(f"Существует {len(possible_nodes)} узла ({possible_nodes}) с минимальной целой перемещения {shortest_path} ")
-
-    # Проходим по доступным узлам
-    print(matrix)
-    dummy_node = possible_nodes
-    for node in possible_nodes:
-        print("Текущий индекс узла", node)
-        if matrix[node].count(inf) == 4:
-            print(f"{node} узел - тупик! ")
-            visited_index = dummy_node.index(node)
-            dummy_node.pop(visited_index)
-            marks[node] = shortest_path
-    marks[dummy_node[-1]-1] = shortest_path
-    possible_nodes = dummy_node
-    print("Нетупиковые узлы", possible_nodes)
-    print("Метки", marks)
-
-        
-    possible_nodes=dummy_node
+    return weight
+     
 if __name__ == "__main__":
-    inf =  7777 
-    matrix = [[inf, 10, 30, 50, 10], [inf, inf, inf, inf], [inf,inf,inf,inf,10], [inf, 40, 20, inf, inf ],[10, inf, 10, 30, inf]]
-    print(matrix)
+    # Задаёмся условной бесконечностью
+    inf = 777
 
-    Deikstra(matrix)
+    # Формируем матрицу весов
+    matrix = [
+                [inf , 10, 3, inf],
+                [10, inf, 4, inf],
+                [3, 4, inf, 11],
+                [inf, inf, 11, inf],
+            ]
+    lenght = len(matrix)
+
+    print("Кратчайшее расстояние:\nx0, x1, 2, x3")
+    print(Dijkstra(lenght, 3, matrix, inf))
